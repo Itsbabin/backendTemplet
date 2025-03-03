@@ -1,6 +1,8 @@
 import express from 'express'
 import cors from 'cors'
 
+import UserRouter from "./routers/user.router.js";
+
 const app = express();
 
 app.use(cors({
@@ -17,6 +19,8 @@ app.use(express.urlencoded({
     limit: "20kb"
 }))
 
+
+app.use('/user',UserRouter)
 
 
 export default app ;
