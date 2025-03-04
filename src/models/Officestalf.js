@@ -24,6 +24,7 @@ const OfficeStalfSchema = new mongoose.Schema({
         type : Number,
         require : true,
         trim : true,
+        unique : true
     },
     email : {
         type : String,
@@ -52,13 +53,15 @@ const OfficeStalfSchema = new mongoose.Schema({
         type : String,
         trim : true,
     },
+    adhaar_pic_URL : {
+        type : String,
+        trim : true,
+    },
     profile_pic_URL : {
-        require : true,
         type : String,
         trim : true,
     },
     signature_pic_URL : {
-        require : true,
         type : String,
         trim : true,
     },
