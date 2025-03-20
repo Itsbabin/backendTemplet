@@ -53,7 +53,7 @@ async function UserSingupControler(req, res) {
           id: introducer.id,
           name: introducer.name,
         },
-        profile_pic_URL: profile_pic_URL ? profile_pic_URL : "defult url",
+        profile_pic_URL: profile_pic_URL ? profile_pic_URL : "https://res.cloudinary.com/dxg0zpyu4/image/upload/f_auto,q_auto/xzjbpzsgoddt54v00hxs",
         rank : 0,
         earning : 0,
         kyc: 0,

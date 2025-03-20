@@ -1,7 +1,9 @@
 import app from "./app.js";
 import connectToDB from "./DB/connectToDB.js";
+import { configDotenv } from "dotenv"
 
-if (process.env.NODE_ENV == "development") {
+configDotenv()
+if (process.env.NODE_ENV == "developent") {
     console.log = function() {};
     console.debug =function() {};
     console.info = function() {};
