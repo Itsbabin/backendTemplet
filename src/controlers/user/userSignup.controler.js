@@ -1,74 +1,118 @@
 import { updateUserId, USER_ID } from "../../const.js";
 import Agent from "../../models/Agent.model.js";
 import isUserExist from "../../utils/isUserExists.js";
+import uploadMeadia from "../../cloudinary/uploadPhoto.js";
+import fs from "fs"
 
 async function UserSingupControler(req, res) {
+  
+  try {
+    
   let {
     name,
     password,
     phone_number,
     email,
-    adhaar,
-    pan,
+    date_of_birth,
     pin,
     address,
     introducer,
     profile_pic_URL,
-    adhaar_pic_URL,
-    pan_pic_URL,
-    signature_pic_URL,
-    kyc_profile_pic_URL
-  } = req.body;
+  } = JSON.parse(req.body.json);
+
+  
 
   if (
     name &&
     password &&
     phone_number &&
     email &&
-    adhaar &&
-    pan &&
     pin &&
     address &&
-    introducer &&
-    signature_pic_URL
+    introducer
   ) {
-    let exist = await isUserExist({ adhaar, pan, phone_number });
+    let exist = await isUserExist({ phone_number ,email});
 
     if (exist) {
       res.status(300).send({
         messeg: "already exist",
       });
-    }
-    else if (!exist) {
-      console.log(USER_ID);
-      
+    } else if (!exist) {
+      try {
+        let id = `${USER_ID}`.slice(1)
       await Agent.create({
-        userid : `${USER_ID}`,
+        userid: `KCC${id}`,
         name,
         password,
         phone_number,
         email,
-        adhaar,
-        pan,
+        date_of_birth,
         pin,
         address,
-        introducer,
-        profile_pic_URL : profile_pic_URL || 'defult url' ,
-        kyc_profile_pic_URL,
-        adhaar_pic_URL,
-        signature_pic_URL,
-        pan_pic_URL,
-        kyc : 0,
+        introducer: {
+          id: introducer.id,
+          name: introducer.name,
+        },
+        profile_pic_URL: profile_pic_URL ? profile_pic_URL : "defult url",
+        rank : 0,
+        earning : 0,
+        kyc: 0,
         bv: 0,
-        net_bv: 0,
       })
-        .then((response) => {
-          let token = response.genarateToken();
+        .then(async (response) => {
           updateUserId();
-          console.log(USER_ID);
-          res.status(200).send({
-            ...response._doc,
-            token,
+          let token = response.genarateToken(); 
+      
+          await Agent.findOneAndUpdate(
+            { userid: introducer.id },
+            {
+              $push: {
+                juniors: { id: response.userid, name: response.name },
+              },
+            },
+            { new: true }
+          ).then(() => {
+            console.log(req.file);
+        
+            req.file.filename ?  uploadMeadia(`uploads/${req.file.filename}`, response.userid)
+              .then(async (result) => {
+                await fs.unlink(`uploads/${req.file.filename}`,() => {
+                  console.log("file deleted");
+              })
+                await Agent.findOneAndUpdate(
+                  { userid: response.userid },
+                  { $set: { profile_pic_URL: result.secure_url } },
+                  { new: true }
+                )
+                  .then((response) => {
+                    res.status(200).send({
+                      ...response._doc
+                    });
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                    
+                    res.status(400).send({
+                      error,
+                    });
+                  });
+                
+              })
+              .catch(async(error) => {
+                
+                await fs.unlink(`uploads/${req.file.filename}`,() => {
+                  console.log("file deleted");
+                })
+                console.log(error);
+                res.status(300).send({
+                  messeg: "give a valid user id",
+                });
+              })
+            :  res.status(200).send({
+              ...response._doc,
+              token,
+            });
+            
           });
         })
         .catch((err) => {
@@ -76,13 +120,28 @@ async function UserSingupControler(req, res) {
             messeg: "err",
           });
           console.log(err);
-        });
-    }
+        })
+      
+       
+        } catch (error) {
+          res.status(300).send({
+            messeg: "err",
+          });
+        }
+      }
+    
   } else {
+    console.log(name, password, phone_number, email, pin, address, introducer);
+    
     res.status(300).send({
       messeg: "invalid credentials",
     });
   }
+} catch (error) {
+  res.status(300).send({
+    messeg: "some error occured",
+  });
+}
 }
 
 export default UserSingupControler;

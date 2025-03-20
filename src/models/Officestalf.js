@@ -21,7 +21,7 @@ const OfficeStalfSchema = new mongoose.Schema({
         trim : true,
     },
     phone_number : {
-        type : Number,
+        type : String,
         require : true,
         trim : true,
         unique : true
@@ -31,40 +31,10 @@ const OfficeStalfSchema = new mongoose.Schema({
         require : true,
         trim : true,
     },
-    adhaar : {
-        type : Number,
-        require : true,
-        trim : true,
-        unique : true
-    },
-    pan : {
-        type : String,
-        require : true,
-        trim : true,
-        unique : true
-    },
-    pin : {
-        require : true,
-        type : Number,
-        trim : true,
-    },
-    address: {
-        require : true,
-        type : String,
-        trim : true,
-    },
-    adhaar_pic_URL : {
-        type : String,
-        trim : true,
-    },
     profile_pic_URL : {
         type : String,
         trim : true,
-    },
-    signature_pic_URL : {
-        type : String,
-        trim : true,
-    },
+    }
 },{
     timestamps : true
 });
@@ -78,6 +48,9 @@ OfficeStalfSchema.pre("save", async function (next) {
 OfficeStalfSchema.methods.genarateToken = function () {
     const token = jwt.sign({userid : this.userid} , process.env.SECRET ) ;
     return token ;
+}
+OfficeStalfSchema.methods.updatePassword = async function () {
+    this.password = await bcrypt.hash(this.password,10) 
 }
 
 OfficeStalfSchema.methods.isPasswordCorrect = function (password) {

@@ -3,10 +3,11 @@ import Agent from "../../models/Agent.model.js"
 
 
 export default async function UserLoginControler(req, res) {
-    let { userid, password } = req.body
-   
-    if (userid && password) {
-             await Agent.findOne({ userid })
+    let { phone_number, password } = req.body
+    try {
+        
+    if ( phone_number && password) {
+             await Agent.findOne({$or: [ {phone_number} ,{ userid : phone_number}]})
             .then(async (response) => {
                 if (!response) {
                     res.status(404).send({
@@ -15,6 +16,7 @@ export default async function UserLoginControler(req, res) {
                 }
                 else {
                     if ( await response.isPasswordCorrect(password)) {
+                       
                         
                            let token = response.genarateToken()
                         res.status(200).send({
@@ -30,10 +32,25 @@ export default async function UserLoginControler(req, res) {
                 }
             })
             .catch((err) => {
+                console.log(err);
                 res.status(400).send({
+                    
                     messeg : "something went wrong" 
                 }) 
             })
            
     }
+    else{
+        res.status(400).send({
+                    
+            messeg : "invalid credential" 
+        }) 
+    }
+    
+} catch (error) {
+    res.status(400).send({
+                    
+        messeg : "some error occured" 
+    })
+}
 }

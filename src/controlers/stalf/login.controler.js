@@ -3,6 +3,9 @@ import OfficeStalf from "../../models/Officestalf.js"
 
 export default async function LoginControler(req, res) {
     let { userid, password } = req.body
+    
+    try {
+        
    
     if (userid && password) {
              await OfficeStalf.findOne({ userid })
@@ -35,4 +38,9 @@ export default async function LoginControler(req, res) {
             })
            
     }
+} catch (error) {
+    res.status(400).send({
+       error : "some error occured"
+    }) 
+}
 }

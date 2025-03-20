@@ -1,134 +1,151 @@
 import mongoose from "mongoose";
-import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
-
-const AgentSchema = new mongoose.Schema({
+const AgentSchema = new mongoose.Schema(
+  {
     userid: {
-        type: String,
-        require: true,
-        trim: true,
-        unique: true
+      type: String,
+      require: true,
+      trim: true,
+      unique: true,
     },
     name: {
-        type: String,
-        require: true,
-        trim: true,
+      type: String,
+      trim: true,
     },
     password: {
-        type: String,
-        require: true,
-        trim: true,
+      type: String,
+      require: true,
+      trim: true,
     },
     bv: {
-        type: Number,
-        trim: true,
+      type: Number,
+      trim: true,
     },
-    rank : {
-        type: Number,
-        trim: true,
+    rank: {
+      type: Number,
+      trim: true,
     },
-    date_of_birth : {
-        type : Date
+    date_of_birth: {
+      type: String,
+      trim: true,
     },
     introducer: {
-        id :{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Agent",
-        require : true,
-        trim : true,},
-        name : {
-            type : String,
-            trim : true,
-        }
+      id: {
+        type: String,
+        require: true,
+        trim: true,
+      },
+      name: {
+        type: String,
+        trim: true,
+      },
     },
-    juniors: [{
+    juniors: [
+      {
         id: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Agent",
-            trim : true,
+          type: String,
+          trim: true,
         },
         name: {
-            type: String,
-            trim: true
-        }
-    }],
-    kyc : {
-        type : Number,
+          type: String,
+          trim: true,
+        },
+      },
+    ],
+    earning : {
+      type: Number,
+      require: true,
+    },
+    rank: {
+      type: Number,
+      require: true,
+    },
+    kyc: {
+      type: Number,
     },
     phone_number: {
-        type: Number,
-        require: true,
-        trim: true,
-        unique: true
+      type: String,
+      require: true,
+      trim: true,
+      unique: true,
     },
     email: {
-        type: String,
-        require: true,
-        trim: true,
+      type: String,
+      require: true,
+      trim: true,
     },
     adhaar: {
-        type: Number,
-        require: true,
-        trim: true,
-        unique: true
+      type: Number,
+      trim: true,
+    //   unique: true,
     },
     pan: {
-        type: String,
-        require: true,
-        trim: true,
-        unique: true
+      type: String,
+      trim: true,
+    //   unique: true,
     },
     pin: {
-        require: true,
-        type: Number,
-        trim: true,
+      require: true,
+      type: Number,
+      trim: true,
     },
     address: {
-        require: true,
-        type: String,
-        trim: true,
+      careof: { require: true, type: String, trim: true },
+      addressline1: { require: true, type: String, trim: true },
+      addressline2: { require: true, type: String, trim: true },
+      post: { require: true, type: String, trim: true },
+      policestation: { require: true, type: String, trim: true },
+      town_city: { require: true, type: String, trim: true },
+      dist: { require: true, type: String, trim: true },
+      state: { require: true, type: String, trim: true },
     },
     adhaar_pic_URL: {
-        type: String,
-        trim: true,
+      type: String,
+      trim: true,
     },
     profile_pic_URL: {
-        type: String,
-        trim: true,
+      type: String,
+      trim: true,
     },
     kyc_profile_pic_URL: {
-        type: String,
-        trim: true,
+      type: String,
+      trim: true,
     },
     pan_pic_URL: {
-        type: String,
-        trim: true,
+      type: String,
+      trim: true,
     },
     signature_pic_URL: {
-        type: String,
-        trim: true,
+      type: String,
+      trim: true,
     },
-}, {
-    timestamps: true
-});
-
+  },
+  {
+    timestamps: true,
+  }
+);
 
 AgentSchema.pre("save", async function (next) {
-    this.password = await bcrypt.hash(this.password, 10);
-    next();
-})
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
 
 AgentSchema.methods.genarateToken = function () {
-    const token = jwt.sign({ userid: this.userid }, process.env.SECRET);
-    return token;
-}
+  const token = jwt.sign({ userid: this.userid }, process.env.SECRET);
+  return token;
+};
+
+AgentSchema.pre("validate",async function (next) {
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
 
 AgentSchema.methods.isPasswordCorrect = function (password) {
-    return bcrypt.compare(password, this.password);
-}
+  return bcrypt.compare(password, this.password);
+};
 
+const Agent = mongoose.model("Agent", AgentSchema);
 
-const Agent = mongoose.model('Agent', AgentSchema);
-
-export default Agent; 
+export default Agent;
