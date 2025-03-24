@@ -9,7 +9,7 @@ async function verifyJwtUser(req, res, next) {
     let token = req.header("token");
 
     if (!token) {
-      throw new ApiResponse(false, "we cant get token", null);
+      res.status(300).send( {messeg : "token not exist"});
     }
 
     let isVerified =  jwt.verify(token,process.env.SECRET)
@@ -33,7 +33,9 @@ async function verifyJwtUser(req, res, next) {
         }
        
     } catch (error) {
-        res.status(400).json(new ApiResponse(false, "some error ocurred", {error})); 
+        console.log(error);
+        
+        res.status(400).json({messeg : "some error ocurred"}); 
     }
 
 }

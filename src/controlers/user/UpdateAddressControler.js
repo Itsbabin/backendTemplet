@@ -1,23 +1,23 @@
 import Agent from "../../models/Agent.model.js"
-import bcrypt from 'bcrypt'
 
-export default async function UpdatePasswordControler(req , res) {
+export default async function UpdateAddressControler(req , res) {
 try {
-   let {password} = req.body
+   let {address , pin} = req.body
+   
     
-   let  newpassword = await bcrypt.hash(password, 10);
    await Agent.findOneAndUpdate({userid : req.user.userid },{
-     password : newpassword
+    address,
+    pin
    })
    .then((response) =>{
-    
     res.status(200).send({
-        messeg : "Password updated Successfully"
+        messeg : "Address updated Successfully",
+        user : response
       });
    })
    .catch(() =>{
     res.status(400).send({
-        messeg : "Error occured on changing Password"
+        messeg : "Error occured on changing Address"
       });
    })
 } catch (error) {

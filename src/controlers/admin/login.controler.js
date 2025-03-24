@@ -4,8 +4,7 @@ import jwt from 'jsonwebtoken';
 
     const loginAdmin = async (req, res) => {
         const { phone_number, password } = req.body;
-                console.log(phone_number);
-                
+               
         try {
 
             const admin = await Admin.findOne({ userid: phone_number });
@@ -24,6 +23,8 @@ import jwt from 'jsonwebtoken';
 
             res.status(200).json({ token });
         } catch (error) {
+            console.log(error);
+            
             res.status(500).json({ message: 'Server error' });
         }
     };
