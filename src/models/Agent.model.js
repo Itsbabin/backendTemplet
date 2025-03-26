@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import bcrypt from "bcrypt";
+// import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 const AgentSchema = new mongoose.Schema(
@@ -127,24 +127,27 @@ const AgentSchema = new mongoose.Schema(
   }
 );
 
-AgentSchema.pre("save", async function (next) {
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
-});
+// AgentSchema.pre("save", async function (next) {
+//   console.log("from middleware" ,this.password);
+//   // this.password = await bcrypt.hash(this.password, 10);
+//   next();
+// });
 
 AgentSchema.methods.genarateToken = function () {
   const token = jwt.sign({ userid: this.userid }, process.env.SECRET);
   return token;
 };
 
-AgentSchema.pre("validate",async function (next) {
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
-});
+// AgentSchema.pre("validate",async function (next) {
+  
+//   console.log("used validate", this.password);
+//   // this.password = await bcrypt.hash(this.password, 10);
+//   next();
+// });
 
-AgentSchema.methods.isPasswordCorrect = function (password) {
-  return bcrypt.compare(password, this.password);
-};
+// AgentSchema.methods.isPasswordCorrect = function (password) {
+//   // return bcrypt.compare(password, this.password);
+// };
 
 const Agent = mongoose.model("Agent", AgentSchema);
 

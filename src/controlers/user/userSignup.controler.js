@@ -17,6 +17,7 @@ async function UserSingupControler(req, res) {
       introducer,
       profile_pic_URL,
     } = JSON.parse(req.body.json);
+    console.log("from body", password);
 
     if (
       name &&
@@ -37,7 +38,10 @@ async function UserSingupControler(req, res) {
         let introExist = await Agent.findOne({ userid: introducer.id });
         if (introExist) {
           try {
+            console.log("before save", password);
             let id = `${USER_ID}`.slice(1);
+            console.log(id);
+
             await Agent.create({
               userid: `KCC${id}`,
               name,
@@ -61,6 +65,8 @@ async function UserSingupControler(req, res) {
             })
               .then(async (response) => {
                 updateUserId();
+                console.log(response);
+
                 let token = response.genarateToken();
 
                 await Agent.findOneAndUpdate(
@@ -88,8 +94,7 @@ async function UserSingupControler(req, res) {
                           );
                           await Agent.findOneAndUpdate(
                             { userid: response.userid },
-                            { $set: { profile_pic_URL: result.secure_url } },
-                            { new: true }
+                            { $set: { profile_pic_URL: result.secure_url } }
                           )
                             .then((response) => {
                               res.status(200).send({
@@ -123,13 +128,13 @@ async function UserSingupControler(req, res) {
                 });
               })
               .catch((err) => {
-                console.log("err1",err);
+                console.log("err1", err);
                 res.status(300).send({
                   messeg: "err1",
                 });
               });
           } catch (error) {
-            console.log("err2",error);
+            console.log("err2", error);
             res.status(300).send({
               messeg: "err2",
             });

@@ -15,7 +15,7 @@ export default async function UserLoginControler(req, res) {
                     })
                 }
                 else {
-                    if ( await response.isPasswordCorrect(password)) {
+                    if ( await response.password == `${password}`) {
                        
                         
                            let token = response.genarateToken()
