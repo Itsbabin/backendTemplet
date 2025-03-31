@@ -1,13 +1,11 @@
 import Agent from "../../models/Agent.model.js"
-import bcrypt from 'bcrypt'
 
 export default async function UpdatePasswordControler(req , res) {
 try {
    let {password} = req.body
     
-   let  newpassword = await bcrypt.hash(password, 10);
    await Agent.findOneAndUpdate({userid : req.user.userid },{
-     password : newpassword
+     password : password
    })
    .then((response) =>{
     

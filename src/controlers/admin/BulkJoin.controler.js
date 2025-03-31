@@ -13,6 +13,7 @@ export default async function BulkJoinControler(req, res) {
         
         agent.kyc = 0,
         agent.bv = 0,
+        agent.rank = 0,
         agent.juniors = [];
         agent.profile_pic_URL = "https://res.cloudinary.com/dxg0zpyu4/image/upload/f_auto,q_auto/xzjbpzsgoddt54v00hxs"
 

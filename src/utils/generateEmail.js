@@ -2,7 +2,6 @@ import axios from "axios";
 
 export default async function generateEmail(otp,email) {
   let isSend 
-  console.log("hi");
   
   const url = new URL(
     'https://control.msg91.com/api/v5/email/send'
