@@ -2,7 +2,7 @@ import axios from "axios";
 
 
 export default async function SMSConfirm(req , res) {
-    const { phone_number , name , userid } = req.body;
+    const { phone_number , name , userid , password } = req.body;
 
     if (!phone_number) {
         return res.status(400).json({ message: 'Phone number is required' , status : false});
@@ -12,6 +12,9 @@ export default async function SMSConfirm(req , res) {
     }
     if (!name) {
         return res.status(400).json({ message: 'Name is required' , status : false});
+    }
+    if (!password) {
+        return res.status(400).json({ message: 'password is required' , status : false});
     }
 
     if (phone_number.length != 10) {
@@ -27,7 +30,7 @@ export default async function SMSConfirm(req , res) {
             accept: 'application/json',
             'content-type': 'application/json'
         },
-        data: `{\n  "template_id": "67e53a33d6fc05159c588db3",\n  "short_url": "1", \n  "recipients": [\n    {\n      "mobiles": "91${phone_number}",\n      "userid": "${userid}", "name": "${name}" }\n  ]\n}`
+        data: `{\n  "template_id": "67e53b2fd6fc0571fa4902c2",\n  "short_url": "1", \n  "recipients": [\n    {\n      "mobiles": "91${phone_number}",\n      "userid": "${userid}", "name": "${name}" , "password": "${password}" }\n  ]\n}`
     };
 
     try {

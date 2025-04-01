@@ -4,8 +4,6 @@ import cors from 'cors'
 import StalfRouter from "./routers/stalf.router.js";
 import UserRouter from "./routers/user.router.js";
 import AdimRouter from "./routers/admin.router.js";
-import generateEmail from './utils/generateEmail.js';
-import ConfirmEmail from './utils/ConfirmEmail.js';
 import sendOTP from './utils/SmsOTP/SMSOTP.js';
 import SMSConfirm from './utils/SmsOTP/SMSConfirm.js';
 const app = express();
